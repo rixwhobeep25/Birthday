@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Countdown for Khala!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(30, 41, 59, 0.7);
+            padding: 40px 20px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 { color: #f43f5e; font-size: 2.2rem; margin-bottom: 20px; text-shadow: 0 0 10px rgba(244,63,94,0.3); }
+        .timer { font-size: 3rem; font-weight: 800; color: #38bdf8; margin: 25px 0; letter-spacing: 1px; }
+        .hidden-content { display: none; }
+        
+        /* Quiz Styling */
+        .quiz-box { background: #334155; padding: 25px; border-radius: 16px; margin: 20px 0; border: 1px solid #475569; }
+        .math-eq { font-size: 1.5rem; font-weight: bold; color: #fbbf24; margin: 15px 0; padding: 10px; background: #1e293b; border-radius: 8px; }
+        .quiz-btn { display: block; width: 100%; background: #475569; color: white; border: none; padding: 12px; margin: 10px 0; border-radius: 12px; font-size: 1.1rem; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .quiz-btn:hover { background: #64748b; }
+        .quiz-btn.wrong { background: #ef4444 !important; }
+        #quiz-feedback { color: #f43f5e; font-weight: bold; min-height: 24px; margin-top: 10px; }
+
+        /* Wish Styling */
+        .btn { display: inline-block; background: #06b6d4; color: white; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; margin-top: 25px; box-shadow: 0 0 15px rgba(6,182,212,0.4); transition: 0.3s; }
+        .btn:hover { background: #0891b2; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- PHASE 1: LOCK SCREEN (Before 12 AM) -->
+    <div id="lock-screen">
+        <h1>🚨 ACCESS DENIED 🚨</h1>
+        <p>This page has been locked by your Mama. It will automatically unlock precisely at 12:00 AM on your birthday!</p>
+        <div class="timer" id="countdown">Loading...</div>
+        <p style="font-size: 0.9rem; color: #94a3b8;">No sneaking around, time is watching you.</p>
+    </div>
+
+    <!-- PHASE 2: THE MATH QUIZ SCREEN (Triggers at 12 AM) -->
+    <div id="quiz-screen" class="hidden-content">
+        <h1>⚠️ URGENT POP QUIZ ⚠️</h1>
+        <p>Before you get your birthday wishes, you must pass the final boss level. Solve for $x$ right now or your gifts get deleted:</p>
+        
+        <div class="quiz-box">
+            <div class="math-eq">$$x = 2 + 2 \times 0$$</div>
+            <button class="quiz-btn" onclick="checkAnswer(this, false)">$x = 0$ (Standard Khala math)</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, true)">$x = 2$ (The real answer)</button>
+            <button class="quiz-btn" onclick="checkAnswer(this, false)">$x = \text{Error: Too many kicks given to Mama}$</button>
+            <div id="quiz-feedback"></div>
+        </div>
+    </div>
+
+    <!-- PHASE 3: THE FINAL CRAZY WISH (Unlocks after passing quiz) -->
+    <div id="unlocked-screen" class="hidden-content">
+        <h1>🎉 HAPPY BIRTHDAY NAKA! 🎉</h1>
+        <p style="font-size: 1.2rem; color: #38bdf8; font-weight: 600;">You actually survived the quiz! 😂</p>
+        
+        <p>You know you share a completely crazy bond with me. Even though you annoy me constantly and literal hyper mode triggered math-hating kicks are part of the daily routine, you are still the absolute best.</p>
+        
+        <p>I adore you completely, my favorite daily dump site for all problems! Hope your day is as wild and awesome as you are. ❤️</p>
+        
+        <!-- Put your Instagram Story link inside the href below -->
+        <a href="https://instagram.com" class="btn" target="_blank">👉 CLICK TO OPEN YOUR BIRTHDAY ROAST GRID</a>
+    </div>
+</div>
+
+<script>
+    // Set Target Date to exactly July 10, 2026 at 12:00:00 AM local time
+    const targetDate = new Date(2026, 6, 10, 0, 0, 0).getTime(); 
+
+    const timerInterval = setInterval(function() {
+        const now = new Date().getTime();
+        const difference = targetDate - now;
+
+        // When countdown hits midnight
+        if (difference <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById("lock-screen").style.display = "none";
+            // Show the quiz screen first!
+            document.getElementById("quiz-screen").style.display = "block";
+            return;
+        }
+
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        let timeString = "";
+        if (days > 0) timeString += days + "d ";
+        timeString += hours + "h " + minutes + "m " + seconds + "s ";
+        
+        document.getElementById("countdown").innerHTML = timeString;
+    }, 1000);
+
+    // Interactive Quiz Logic
+    function checkAnswer(button, isCorrect) {
+        const feedback = document.getElementById("quiz-feedback");
+        if (isCorrect) {
+            feedback.style.color = "#4ade80";
+            feedback.innerHTML = "Correct! Unlocking your wish...";
+            setTimeout(() => {
+                document.getElementById("quiz-screen").style.display = "none";
+                document.getElementById("unlocked-screen").style.display = "block";
+            }, 1000);
+        } else {
+            button.classList.add("wrong");
+            feedback.innerHTML = "❌ WRONG! Try again before you get kicked!";
+        }
+    }
+</script>
+
+</body>
+</html>
